@@ -4,25 +4,31 @@
 #include <iostream>
 #include <sstream>
 
+#include "../include/exceptions_class.h"
+
 ParserFile::ParserFile(const std::string& filename) {
   std::ifstream file(filename);
   if (!file.is_open()) {
-    throw std::runtime_error("Failed to open file: " + filename);
+    throw ClubException("Failed to open file: " + filename);
   }
 
   std::string line;
   if (!std::getline(file, line))
-    throw std::runtime_error("Missing number of tables");
+    throw ClubException("Missing number of tables");
 
   int numberOfTables;
   try {
     numberOfTables = std::stoi(line);
   } catch (...) {
-    throw std::runtime_error("Invalid number of tables");
+    throw ClubException("Invalid number of tables");
+  }
+
+  if (numberOfTables <= 0) {
+    throw ClubException("Invalid number of tables");
   }
 
   if (!std::getline(file, line))
-    throw std::runtime_error("Missing open and close time");
+    throw ClubException("Missing open and close time");
 
   std::stringstream iss(line);
   std::string open;
@@ -33,13 +39,13 @@ ParserFile::ParserFile(const std::string& filename) {
   Time closeTime(close);
 
   if (!std::getline(file, line))
-    throw std::runtime_error("Missing price per hour");
+    throw ClubException("Missing price per hour");
 
   int price;
   try {
     price = std::stoi(line);
   } catch (...) {
-    throw std::runtime_error("Invalid price format");
+    throw ClubException("Invalid price format");
   }
 
   ComputerClub tmp(numberOfTables, openTime, closeTime, price);

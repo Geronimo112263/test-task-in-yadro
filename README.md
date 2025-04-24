@@ -27,3 +27,28 @@ cd build
 Формируется текущее состояние клуба: кто сидит, кто ждёт.
 
 В конце выводится итоговый отчёт по времени, деньгам и активности.
+
+
+## структура проекта
+
+├── Makefile
+├── README.md
+├── main.cc
+├── src
+│ ├── computer_club.cc
+│ ├── event.cc
+│ ├── parser_file.cc
+│ ├── time.cc
+├── include
+│ ├── client.h
+│ ├── computer_club.h
+│ ├── define.h
+│ ├── event.h
+│ ├── parser_file.h
+│ ├── table.h
+│ ├── time.h
+├── tests
+│ ├── club_tests.cc
+│ ├── input.txt
+│ ├── output.txt
+└── Тестовое задание С++ новое.docx

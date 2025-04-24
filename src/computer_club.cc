@@ -4,6 +4,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "../include/exceptions_class.h"
+
 ComputerClub::ComputerClub(int n, Time open, Time close, int price)
     : numberOfTables_(n),
       openTime_(open),
@@ -36,6 +38,10 @@ void ComputerClub::handleEvent(const Event &event) {
       break;
     }
     default:
+      allEvents_.emplace_back(
+          Event{event.timeEvent,
+                SYS_ERROR,
+                {"There is no event number " + std::to_string(event.idEvent)}});
       break;
   }
 }
@@ -182,14 +188,13 @@ void ComputerClub::printResults() {
               << client.first << std::endl;
 
     const int index = clients_[name].occupyTable - 1;
-    tables_[index].workingHours +=
-        clients_[name].sitToTable - closeTime_;
+    tables_[index].workingHours += clients_[name].sitToTable - closeTime_;
     tables_[index].income +=
         (clients_[name].sitToTable - closeTime_ + HOUR - 1) / HOUR;
   }
 
   std::cout << closeTime_.toString() << std::endl;
-  
+
   for (const auto &table : tables_) {
     std::cout << timeAndIncomeUseTable(table) << std::endl;
   }
@@ -210,7 +215,7 @@ const Table &ComputerClub::getTable(int index) const {
   if (index > 0 && static_cast<size_t>(index) <= tables_.size()) {
     return tables_[index - 1];
   } else {
-    throw std::out_of_range("Invalid table index: " + std::to_string(index));
+    throw InvalidTableIndexException(index);
   }
 }
 

@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <sstream>
 
+#include "../include/exceptions_class.h"
+
 Time::Time(const std::string &std) { fromString(std); }
 
 Time::Time(const int &minute) : minutes(minute) {};
@@ -15,7 +17,7 @@ void Time::fromString(const std::string &str) {
 
   if (!(iss >> hour >> colon >> minute) || hour < 0 || hour > 23 ||
       minute < 0 || minute > 59) {
-    throw std::runtime_error("Invalid time format: " + str);
+    throw InvalidTimeFormatException(str);
   }
 
   minutes = hour * 60 + minute;
