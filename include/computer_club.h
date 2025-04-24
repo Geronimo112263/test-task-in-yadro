@@ -20,7 +20,7 @@ class ComputerClub {
   const std::vector<Event> &getAllEvents() const;
   const Table &getTable(int index) const;
   size_t getWaitQueueSize() const;
-  
+
  private:
   int numberOfTables_;
   Time openTime_, closeTime_;

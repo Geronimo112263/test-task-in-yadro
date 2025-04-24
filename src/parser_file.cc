@@ -38,8 +38,7 @@ ParserFile::ParserFile(const std::string& filename) {
   Time openTime(open);
   Time closeTime(close);
 
-  if (!std::getline(file, line))
-    throw ClubException("Missing price per hour");
+  if (!std::getline(file, line)) throw ClubException("Missing price per hour");
 
   int price;
   try {

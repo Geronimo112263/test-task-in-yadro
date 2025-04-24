@@ -1,7 +1,7 @@
 #ifndef _INCLUDE_PARSER_FILE_H_
 #define _INCLUDE_PARSER_FILE_H_
 
-#include "../include/computer_club.h"
+#include "computer_club.h"
 
 class ParserFile {
  public:

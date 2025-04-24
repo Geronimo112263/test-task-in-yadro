@@ -5,26 +5,27 @@
 #include <string>
 
 class ClubException : public std::runtime_error {
-public:
-    explicit ClubException(const std::string &message) : std::runtime_error(message){}
+ public:
+  explicit ClubException(const std::string &message)
+      : std::runtime_error(message) {}
 };
 
-class InvalidEventFormatException : public std::runtime_error{
-public:
-    InvalidEventFormatException(const std::string &str) : std::runtime_error("Invalid event format: " + str){};
+class InvalidEventFormatException : public std::runtime_error {
+ public:
+  InvalidEventFormatException(const std::string &str)
+      : std::runtime_error("Invalid event format: " + str) {};
 };
 
-class InvalidTimeFormatException : public std::runtime_error{
-public:
-    InvalidTimeFormatException(const std::string &str) : std::runtime_error("Invalid time format: " + str){};
+class InvalidTimeFormatException : public std::runtime_error {
+ public:
+  InvalidTimeFormatException(const std::string &str)
+      : std::runtime_error("Invalid time format: " + str) {};
 };
 
-class InvalidTableIndexException : public std::out_of_range{
-public:
-    InvalidTableIndexException(const int &index) : std::out_of_range("Invalid table index: " + std::to_string(index)){};
+class InvalidTableIndexException : public std::out_of_range {
+ public:
+  InvalidTableIndexException(const int &index)
+      : std::out_of_range("Invalid table index: " + std::to_string(index)) {};
 };
-    
-
-
 
 #endif
