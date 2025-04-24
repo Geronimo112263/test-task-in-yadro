@@ -11,12 +11,10 @@ ParserFile::ParserFile(const std::string& filename) {
   }
 
   std::string line;
-
   if (!std::getline(file, line))
     throw std::runtime_error("Missing number of tables");
 
   int numberOfTables;
-
   try {
     numberOfTables = std::stoi(line);
   } catch (...) {
@@ -27,14 +25,16 @@ ParserFile::ParserFile(const std::string& filename) {
     throw std::runtime_error("Missing open and close time");
 
   std::stringstream iss(line);
-  std::string open, close;
-
+  std::string open;
+  std::string close;
   iss >> open >> close;
+
   Time openTime(open);
   Time closeTime(close);
 
   if (!std::getline(file, line))
     throw std::runtime_error("Missing price per hour");
+
   int price;
   try {
     price = std::stoi(line);
@@ -43,7 +43,6 @@ ParserFile::ParserFile(const std::string& filename) {
   }
 
   ComputerClub tmp(numberOfTables, openTime, closeTime, price);
-
   while (std::getline(file, line)) {
     if (line.empty()) continue;
 
@@ -54,6 +53,7 @@ ParserFile::ParserFile(const std::string& filename) {
       std::cerr << "Error parsing event: " << ex.what() << std::endl;
     }
   }
+
   club = std::move(tmp);
 }
 

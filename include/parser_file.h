@@ -3,13 +3,14 @@
 
 #include "../include/computer_club.h"
 
-class ParserFile{
-public:
-    ParserFile() = default;
-    ParserFile(const std::string& filename);
-    void print();
-private:
-    ComputerClub club;
+class ParserFile {
+ public:
+  ParserFile() = default;
+  ParserFile(const std::string& filename);
+  void print();
+
+ private:
+  ComputerClub club;
 };
 
 #endif

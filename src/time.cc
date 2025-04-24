@@ -1,6 +1,5 @@
 #include "../include/time.h"
 
-#include <algorithm>
 #include <iomanip>
 #include <sstream>
 
@@ -10,13 +9,15 @@ Time::Time(const int &minute) : minutes(minute) {};
 
 void Time::fromString(const std::string &str) {
   std::stringstream iss(str);
-  int hour, minute;
+  int hour;
+  int minute;
   char colon;
 
   if (!(iss >> hour >> colon >> minute) || hour < 0 || hour > 23 ||
       minute < 0 || minute > 59) {
     throw std::runtime_error("Invalid time format: " + str);
   }
+
   minutes = hour * 60 + minute;
 }
 
@@ -28,7 +29,8 @@ std::string Time::toString() const {
 }
 
 int Time::operator-(const Time &other) const {
-  return abs(minutes - other.minutes);
+  int result = minutes - other.minutes;
+  return result >= 0 ? result : -result;
 }
 
 bool Time::operator>(const Time &other) const {

@@ -6,6 +6,7 @@ Event::Event(const std::string& str) {
   std::stringstream iss(str);
   std::string t;
   int id;
+
   if (!(iss >> t >> id)) {
     throw std::runtime_error("Invalid event format: " + str);
   }
