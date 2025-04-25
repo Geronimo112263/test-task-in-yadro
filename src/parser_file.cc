@@ -9,26 +9,24 @@
 ParserFile::ParserFile(const std::string& filename) {
   std::ifstream file(filename);
   if (!file.is_open()) {
-    throw ClubException("Failed to open file: " + filename);
+    throw ClubException(FILE_NOT_FOUND + filename);
   }
 
   std::string line;
-  if (!std::getline(file, line))
-    throw ClubException("Missing number of tables");
+  if (!std::getline(file, line)) throw ClubException(MISSING_TABLES);
 
   int numberOfTables;
   try {
     numberOfTables = std::stoi(line);
   } catch (...) {
-    throw ClubException("Invalid number of tables");
+    throw ClubException(INVALID_TABLES);
   }
 
   if (numberOfTables <= 0) {
-    throw ClubException("Invalid number of tables");
+    throw ClubException(INVALID_TABLES);
   }
 
-  if (!std::getline(file, line))
-    throw ClubException("Missing open and close time");
+  if (!std::getline(file, line)) throw ClubException(INVALID_TIME);
 
   std::stringstream iss(line);
   std::string open;
@@ -38,13 +36,13 @@ ParserFile::ParserFile(const std::string& filename) {
   Time openTime(open);
   Time closeTime(close);
 
-  if (!std::getline(file, line)) throw ClubException("Missing price per hour");
+  if (!std::getline(file, line)) throw ClubException(INVALID_PPH);
 
   int price;
   try {
     price = std::stoi(line);
   } catch (...) {
-    throw ClubException("Invalid price format");
+    throw ClubException(INVALID_PRICE);
   }
 
   ComputerClub tmp(numberOfTables, openTime, closeTime, price);
@@ -55,7 +53,7 @@ ParserFile::ParserFile(const std::string& filename) {
       Event event(line);
       tmp.handleEvent(event);
     } catch (const std::exception& ex) {
-      std::cerr << "Error parsing event: " << ex.what() << std::endl;
+      std::cerr << ERROR_EVENT << ex.what() << std::endl;
     }
   }
 

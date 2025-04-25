@@ -17,6 +17,10 @@ ComputerClub::ComputerClub(int n, Time open, Time close, int price)
 }
 
 void ComputerClub::handleEvent(const Event &event) {
+  if (event.args.size() > 2) {
+    throw IncorrectNumberOfArgumentsException();
+  }
+
   allEvents_.push_back(event);
   const auto &args = event.args;
 
@@ -41,23 +45,26 @@ void ComputerClub::handleEvent(const Event &event) {
       allEvents_.emplace_back(
           Event{event.timeEvent,
                 SYS_ERROR,
-                {"There is no event number " + std::to_string(event.idEvent)}});
+                {NOT_EVENT + std::to_string(event.idEvent)}});
       break;
   }
 }
 
 void ComputerClub::handleClientCome(const Event &event,
                                     const std::vector<std::string> &args) {
+  if (event.args.size() != 1) {
+    throw IncorrectNumberOfArgumentsException();
+  }
+
   const std::string &name = args[0];
 
   if (clients_.count(name)) {
-    allEvents_.emplace_back(
-        Event{event.timeEvent, SYS_ERROR, {"YouShallNotPass"}});
+    allEvents_.emplace_back(Event{event.timeEvent, SYS_ERROR, {NOT_PASS}});
     return;
   }
 
   if (openTime_ > event.timeEvent) {
-    allEvents_.emplace_back(Event{event.timeEvent, SYS_ERROR, {"NotOpenYet"}});
+    allEvents_.emplace_back(Event{event.timeEvent, SYS_ERROR, {NOT_OPEN}});
     return;
   }
 
@@ -66,44 +73,46 @@ void ComputerClub::handleClientCome(const Event &event,
 
 void ComputerClub::handleClientSit(const Event &event,
                                    const std::vector<std::string> &args) {
+  if (event.args.size() != 2) {
+    throw IncorrectNumberOfArgumentsException();
+  }
+
   const std::string &name = args[0];
   int numsTable;
 
   try {
     numsTable = std::stoi(args[1]);
   } catch (...) {
-    allEvents_.emplace_back(
-        Event{event.timeEvent, SYS_ERROR, {"InvalidTableNumber"}});
+    allEvents_.emplace_back(Event{event.timeEvent, SYS_ERROR, {INVALID_TABLE}});
     return;
   }
 
   if (numsTable <= 0 || numsTable > (int)tables_.size()) {
     allEvents_.emplace_back(
-        Event{event.timeEvent, event.idEvent, {"InvalidTableNumber"}});
+        Event{event.timeEvent, event.idEvent, {INVALID_TABLE}});
     return;
   }
 
   if (!clients_.count(name)) {
-    allEvents_.emplace_back(
-        Event{event.timeEvent, SYS_ERROR, {"ClientUnknown"}});
+    allEvents_.emplace_back(Event{event.timeEvent, SYS_ERROR, {CLIEN_UNKNOWN}});
     return;
   }
 
   if (clients_[name].occupyTable == numsTable ||
       tables_[numsTable - 1].occupy) {
-    allEvents_.emplace_back(Event{event.timeEvent, SYS_ERROR, {"PlaceIsBusy"}});
+    allEvents_.emplace_back(Event{event.timeEvent, SYS_ERROR, {IS_BUSY}});
     return;
   }
 
   if (clients_[name].occupyTable > 0) {
     tables_[clients_[name].occupyTable - 1].occupy = false;
     tables_[clients_[name].occupyTable - 1].workingHours +=
-        clients_[name].sitToTable - event.timeEvent;
+        clients_[name].timeToSit - event.timeEvent;
     tables_[clients_[name].occupyTable - 1].income +=
-        (clients_[name].sitToTable - event.timeEvent + HOUR - 1) / HOUR;
+        (clients_[name].timeToSit - event.timeEvent + HOUR - 1) / HOUR;
   }
 
-  clients_[name].sitToTable = event.timeEvent;
+  clients_[name].timeToSit = event.timeEvent;
   clients_[name].occupyTable = numsTable;
   tables_[numsTable - 1].occupy = true;
 }
@@ -120,8 +129,7 @@ void ComputerClub::handleClientWait(const Event &event,
 
   for (auto &table : tables_) {
     if (!table.occupy) {
-      allEvents_.emplace_back(
-          Event{event.timeEvent, SYS_ERROR, {"ICanWaitNoLonger!"}});
+      allEvents_.emplace_back(Event{event.timeEvent, SYS_ERROR, {NOT_LONGER}});
       return;
     }
   }
@@ -131,11 +139,15 @@ void ComputerClub::handleClientWait(const Event &event,
 
 void ComputerClub::handleClientLeave(const Event &event,
                                      const std::vector<std::string> &args) {
+  if (event.args.size() != 1) {
+    throw IncorrectNumberOfArgumentsException();
+  }
+
   const std::string &name = args[0];
 
   if (!clients_.count(name)) {
     allEvents_.emplace_back(
-        Event{event.timeEvent, SYS_ERROR, {name, "ClientUnknown"}});
+        Event{event.timeEvent, SYS_ERROR, {name, CLIEN_UNKNOWN}});
     return;
   }
 
@@ -155,7 +167,7 @@ void ComputerClub::handleClientLeave(const Event &event,
       }
 
       clients_[nextClient].occupyTable = tableNumber;
-      clients_[nextClient].sitToTable = event.timeEvent;
+      clients_[nextClient].timeToSit = event.timeEvent;
       tables_[tableNumber - 1].occupy = true;
 
       allEvents_.emplace_back(Event{
@@ -163,9 +175,9 @@ void ComputerClub::handleClientLeave(const Event &event,
     }
 
     tables_[clients_[name].occupyTable - 1].workingHours +=
-        clients_[name].sitToTable - event.timeEvent;
+        clients_[name].timeToSit - event.timeEvent;
     tables_[clients_[name].occupyTable - 1].income +=
-        (clients_[name].sitToTable - event.timeEvent + HOUR - 1) / HOUR;
+        (clients_[name].timeToSit - event.timeEvent + HOUR - 1) / HOUR;
   }
 
   clients_.erase(name);
@@ -174,6 +186,17 @@ void ComputerClub::handleClientLeave(const Event &event,
 void ComputerClub::printResults() {
   std::cout << openTime_.toString() << std::endl;
 
+  eventInformation();
+  profitInformation();
+
+  std::cout << closeTime_.toString() << std::endl;
+
+  for (const auto &table : tables_) {
+    std::cout << getIncomeReport(table) << std::endl;
+  }
+}
+
+void ComputerClub::eventInformation() {
   for (const auto &event : allEvents_) {
     std::cout << event.timeEvent.toString() << " " << event.idEvent;
     for (const auto &arg : event.args) {
@@ -181,26 +204,22 @@ void ComputerClub::printResults() {
     }
     std::cout << std::endl;
   }
+}
 
+void ComputerClub::profitInformation() {
   for (const auto &client : clients_) {
     const std::string &name(client.first);
     std::cout << closeTime_.toString() << " " << SYS_LEAVE << " "
               << client.first << std::endl;
 
     const int index = clients_[name].occupyTable - 1;
-    tables_[index].workingHours += clients_[name].sitToTable - closeTime_;
+    tables_[index].workingHours += clients_[name].timeToSit - closeTime_;
     tables_[index].income +=
-        (clients_[name].sitToTable - closeTime_ + HOUR - 1) / HOUR;
-  }
-
-  std::cout << closeTime_.toString() << std::endl;
-
-  for (const auto &table : tables_) {
-    std::cout << timeAndIncomeUseTable(table) << std::endl;
+        (clients_[name].timeToSit - closeTime_ + HOUR - 1) / HOUR;
   }
 }
 
-std::string ComputerClub::timeAndIncomeUseTable(const Table &table) const {
+std::string ComputerClub::getIncomeReport(const Table &table) const {
   std::stringstream iss;
   iss << table.tableNumber << " " << table.income * priceOfHour << " "
       << Time(table.workingHours).toString();
@@ -219,4 +238,4 @@ const Table &ComputerClub::getTable(int index) const {
   }
 }
 
-size_t ComputerClub::getWaitQueueSize() const { return waitClients_.size(); }
+size_t ComputerClub::getWaitClientsCount() const { return waitClients_.size(); }

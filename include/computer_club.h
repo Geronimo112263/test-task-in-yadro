@@ -19,7 +19,7 @@ class ComputerClub {
 
   const std::vector<Event> &getAllEvents() const;
   const Table &getTable(int index) const;
-  size_t getWaitQueueSize() const;
+  size_t getWaitClientsCount() const;
 
  private:
   int numberOfTables_;
@@ -39,7 +39,9 @@ class ComputerClub {
                         const std::vector<std::string> &args);
   void handleClientLeave(const Event &event,
                          const std::vector<std::string> &args);
-  std::string timeAndIncomeUseTable(const Table &table) const;
+  void profitInformation();
+  void eventInformation();
+  std::string getIncomeReport(const Table &table) const;
 };
 
 #endif

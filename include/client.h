@@ -6,7 +6,7 @@
 struct Client {
   std::string clientName;
   int occupyTable = -1;
-  Time sitToTable;
+  Time timeToSit;
 
   Client() = default;
   Client(const std::string &name) : clientName(name) {};

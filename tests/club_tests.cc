@@ -43,7 +43,7 @@ TEST(ComputerClubTest, ClientWaitsWhenNoFreeTables) {
   club.handleEvent(Event(Time("10:07"), 1, {"Frank"}));
   club.handleEvent(Event(Time("10:08"), 3, {"Frank"}));
 
-  ASSERT_EQ(club.getWaitQueueSize(), 1);
+  ASSERT_EQ(club.getWaitClientsCount(), 1);
 }
 
 TEST(TimeTest, FromStringAndToMinutes) {
