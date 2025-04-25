@@ -24,3 +24,9 @@ Event::Event(const std::string& str) {
 
 Event::Event(const Time& time, int id, const std::vector<std::string>& args)
     : timeEvent(time), idEvent(id), args(args) {}
+
+const Time& Event::getTimeEvent() const { return timeEvent; }
+
+int Event::getIdEvent() const { return idEvent; }
+
+const std::vector<std::string>& Event::getArgs() const { return args; }

@@ -13,7 +13,9 @@ ParserFile::ParserFile(const std::string& filename) {
   }
 
   std::string line;
-  if (!std::getline(file, line)) throw ClubException(MISSING_TABLES);
+  if (!std::getline(file, line)) {
+    throw ClubException(MISSING_TABLES);
+  }
 
   int numberOfTables;
   try {
@@ -26,7 +28,9 @@ ParserFile::ParserFile(const std::string& filename) {
     throw ClubException(INVALID_TABLES);
   }
 
-  if (!std::getline(file, line)) throw ClubException(INVALID_TIME);
+  if (!std::getline(file, line)) {
+    throw ClubException(INVALID_TIME);
+  }
 
   std::stringstream iss(line);
   std::string open;
@@ -36,7 +40,9 @@ ParserFile::ParserFile(const std::string& filename) {
   Time openTime(open);
   Time closeTime(close);
 
-  if (!std::getline(file, line)) throw ClubException(INVALID_PPH);
+  if (!std::getline(file, line)) {
+    throw ClubException(INVALID_PPH);
+  }
 
   int price;
   try {

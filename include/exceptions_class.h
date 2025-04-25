@@ -11,8 +11,9 @@ class ClubException : public std::runtime_error {
 };
 
 class IncorrectNumberOfArgumentsException : public std::runtime_error {
-public:
-    explicit IncorrectNumberOfArgumentsException() : std::runtime_error("Incorrect number of arguments"){};
+ public:
+  explicit IncorrectNumberOfArgumentsException()
+      : std::runtime_error("Incorrect number of arguments") {};
 };
 
 class InvalidEventFormatException : public std::runtime_error {

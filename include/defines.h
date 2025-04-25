@@ -14,7 +14,7 @@
 #define NOT_PASS "YouShallNotPass"
 #define NOT_OPEN "NotOpenYet"
 #define IS_BUSY "PlaceIsBusy"
-#define CLIEN_UNKNOWN  "ClientUnknown"
+#define CLIEN_UNKNOWN "ClientUnknown"
 #define NOT_LONGER "ICanWaitNoLonger!"
 
 #define FILE_NOT_FOUND "Failed to open file: "

@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <fstream>
+
 #include "../include/parser_file.h"
 
 TEST(ComputerClubTest, ClientComeSuccessfully) {
@@ -8,7 +10,8 @@ TEST(ComputerClubTest, ClientComeSuccessfully) {
   club.handleEvent(e);
 
   Event expectedEvent(Time("09:01"), 1, {"Alice"});
-  ASSERT_EQ(club.getAllEvents().back().args[0], expectedEvent.args[0]);
+  ASSERT_EQ(club.getAllEvents().back().getArgs()[0],
+            expectedEvent.getArgs()[0]);
 }
 
 TEST(ComputerClubTest, ClientComesBeforeOpen) {
@@ -16,7 +19,7 @@ TEST(ComputerClubTest, ClientComesBeforeOpen) {
   Event e(Time("09:59"), 1, {"Bob"});
   club.handleEvent(e);
 
-  ASSERT_EQ(club.getAllEvents().back().args[0], "NotOpenYet");
+  ASSERT_EQ(club.getAllEvents().back().getArgs()[0], "NotOpenYet");
 }
 
 TEST(ComputerClubTest, SitClientToTable) {
@@ -33,7 +36,7 @@ TEST(ComputerClubTest, DoubleSitSameTable) {
   club.handleEvent(Event(Time("09:15"), 2, {"Dave", "1"}));
   club.handleEvent(Event(Time("09:20"), 2, {"Dave", "1"}));
 
-  ASSERT_EQ(club.getAllEvents().back().args[0], "PlaceIsBusy");
+  ASSERT_EQ(club.getAllEvents().back().getArgs()[0], "PlaceIsBusy");
 }
 
 TEST(ComputerClubTest, ClientWaitsWhenNoFreeTables) {
@@ -77,19 +80,39 @@ TEST(TimeTest, TimeInvalidEventThrows) {
 TEST(EventTest, ValidEvent) {
   Event event("08:00 1 client1");
   Time time("08:00");
-  EXPECT_EQ(event.timeEvent.toString(), time.toString());
-  EXPECT_EQ(event.idEvent, 1);
-  EXPECT_EQ(event.args[0], "client1");
+  EXPECT_EQ(event.getTimeEvent().toString(), time.toString());
+  EXPECT_EQ(event.getIdEvent(), 1);
+  EXPECT_EQ(event.getArgs()[0], "client1");
 }
 
 TEST(EventTest, EventWithTable) {
   Time time("09:10");
   Event event(time, 2, {"client2"});
-  EXPECT_EQ(event.timeEvent.toString(), time.toString());
-  EXPECT_EQ(event.idEvent, 2);
-  EXPECT_EQ(event.args[0], "client2");
+  EXPECT_EQ(event.getTimeEvent().toString(), time.toString());
+  EXPECT_EQ(event.getIdEvent(), 2);
+  EXPECT_EQ(event.getArgs()[0], "client2");
 }
 
 TEST(EventTest, InvalidEventThrows) {
   EXPECT_THROW(Event(""), std::runtime_error);
+}
+
+TEST(ParserTest, ValidParser) {
+  ParserFile computerClub("tests/input.txt");
+
+  std::streambuf* originalCout = std::cout.rdbuf();
+
+  std::stringstream capturedOutput;
+  std::cout.rdbuf(capturedOutput.rdbuf());
+
+  computerClub.print();
+
+  std::cout.rdbuf(originalCout);
+
+  std::ifstream expectedFile("tests/output.txt");
+  ASSERT_TRUE(expectedFile.is_open());
+
+  std::stringstream expectedBuffer;
+  expectedBuffer << expectedFile.rdbuf();
+  EXPECT_EQ(capturedOutput.str(), expectedBuffer.str());
 }
