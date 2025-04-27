@@ -7,8 +7,8 @@ struct Time {
   int minutes = 0;
 
   Time() = default;
-  Time(const std::string &str);
-  Time(const int &minute);
+  explicit Time(const std::string &str);
+  explicit Time(const int &minute);
 
   void fromString(const std::string &str);
   std::string toString() const;

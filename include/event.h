@@ -8,7 +8,7 @@
 class Event {
  public:
   Event() = default;
-  Event(const std::string& str);
+  explicit Event(const std::string& str);
   Event(const Time& time, int id, const std::vector<std::string>& args);
 
   const Time& getTimeEvent() const;

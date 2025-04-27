@@ -6,7 +6,7 @@
 class ParserFile {
  public:
   ParserFile() = default;
-  ParserFile(const std::string& filename);
+  explicit ParserFile(const std::string& filename);
   void print();
 
  private:

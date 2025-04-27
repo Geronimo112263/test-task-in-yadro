@@ -9,7 +9,7 @@ struct Client {
   Time timeToSit;
 
   Client() = default;
-  Client(const std::string &name) : clientName(name) {};
+  explicit Client(const std::string &name) : clientName(name) {};
 };
 
 #endif

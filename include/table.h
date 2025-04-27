@@ -8,7 +8,7 @@ struct Table {
   int workingHours = 0;
 
   Table() = default;
-  Table(int number) : tableNumber(number) {};
+  explicit Table(int number) : tableNumber(number) {};
 };
 
 #endif

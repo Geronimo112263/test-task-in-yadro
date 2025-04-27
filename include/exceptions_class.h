@@ -18,19 +18,19 @@ class IncorrectNumberOfArgumentsException : public std::runtime_error {
 
 class InvalidEventFormatException : public std::runtime_error {
  public:
-  InvalidEventFormatException(const std::string &str)
+  explicit InvalidEventFormatException(const std::string &str)
       : std::runtime_error("Invalid event format: " + str) {};
 };
 
 class InvalidTimeFormatException : public std::runtime_error {
  public:
-  InvalidTimeFormatException(const std::string &str)
+  explicit InvalidTimeFormatException(const std::string &str)
       : std::runtime_error("Invalid time format: " + str) {};
 };
 
 class InvalidTableIndexException : public std::out_of_range {
  public:
-  InvalidTableIndexException(const int &index)
+  explicit InvalidTableIndexException(const int &index)
       : std::out_of_range("Invalid table index: " + std::to_string(index)) {};
 };
 

@@ -30,7 +30,7 @@ cd build
 
 
 ## структура проекта
-
+```
 ├── Makefile
 ├── README.md
 ├── main.cc
@@ -52,3 +52,4 @@ cd build
 │ ├── input.txt
 │ ├── output.txt
 └── Тестовое задание С++ новое.docx
+```
